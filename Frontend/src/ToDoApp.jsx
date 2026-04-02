@@ -5,7 +5,6 @@ import NotesFilter from "./Components/filter";
 import EditSidebar from "./Components/EditSideBar";
 import axios from "axios";
 
-// Use environment variable for API URL
 const API_URL = "https://todo-mern-bc6a.onrender.com/api/todos";
 
 export default function App() {
