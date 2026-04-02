@@ -5,7 +5,8 @@ import NotesFilter from "./Components/filter";
 import EditSidebar from "./Components/EditSideBar";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/todos";
+// Use environment variable for API URL
+const API_URL = "https://todo-mern-bc6a.onrender.com/api/todos";
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -15,7 +16,6 @@ export default function App() {
   const [isEditSidebarOpen, setIsEditSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
 
   const fetchNotes = async () => {
     setLoading(true);
@@ -64,7 +64,6 @@ export default function App() {
     setIsEditSidebarOpen(true);
   };
 
-
   const handleUpdate = async (updatedCard) => {
     try {
       const res = await axios.put(`${API_URL}/${updatedCard._id}`, updatedCard);
@@ -80,7 +79,6 @@ export default function App() {
     }
   };
 
-
   const toggleComplete = async (note) => {
     try {
       const updated = { ...note, completed: !note.completed };
@@ -95,7 +93,6 @@ export default function App() {
       console.error("Toggle error:", err);
     }
   };
-
 
   const handleFilter = (newSearchTerm, newStatusFilter) => {
     setSearchTerm(newSearchTerm);

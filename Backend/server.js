@@ -6,10 +6,12 @@ const mongoose = require("mongoose");
 const taskRoute = require("./routes/task.route");
 const app = express();
 
-app.use(cors({origin: "https://todo-mern-topaz.vercel.app/"}));
+app.use(cors({
+  origin: "https://todo-mern-topaz.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(cors());
 
 
 app.use("/api/todos", taskRoute);
