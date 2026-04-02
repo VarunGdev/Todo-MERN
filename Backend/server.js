@@ -1,20 +1,17 @@
 require("dotenv").config();
 
-// server.js or app.js
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const taskRoute = require("./routes/task.route");
 const app = express();
 
-// middleware
+app.use(cors({origin: "https://todo-mern-topaz.vercel.app/"}));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cors());
 
 
-
-// routes
 app.use("/api/todos", taskRoute);
 
 app.get("/", (req, res) => {
