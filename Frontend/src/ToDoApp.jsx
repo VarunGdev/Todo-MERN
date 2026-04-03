@@ -4,7 +4,6 @@ import Notes from "./Components/Notes";
 import NotesFilter from "./Components/filter";
 import EditSidebar from "./Components/EditSideBar";
 import axios from "axios";
-import { FiMenu } from "react-icons/fi";
 
 const API_URL = "https://todo-mern-bc6a.onrender.com/api/todos";
 
@@ -16,8 +15,6 @@ export default function App() {
   const [isEditSidebarOpen, setIsEditSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const fetchNotes = async () => {
     setLoading(true);
@@ -99,9 +96,7 @@ export default function App() {
   const handleFilter = (newSearchTerm, newStatusFilter) => {
     setSearchTerm(newSearchTerm);
     setStatusFilter(newStatusFilter);
-
     let filtered = [...notes];
-
     if (newSearchTerm) {
       filtered = filtered.filter(
         (n) =>
@@ -109,88 +104,53 @@ export default function App() {
           n.description.toLowerCase().includes(newSearchTerm.toLowerCase())
       );
     }
-
     if (newStatusFilter && newStatusFilter !== "all") {
       filtered = filtered.filter((n) =>
         newStatusFilter === "completed" ? n.completed : !n.completed
       );
     }
-
     setFilteredNotes(filtered);
   };
 
   return (
-    <div className="flex">
-      
-      {/* ✅ Mobile Menu Button */}
-      <button
-        className="fixed top-4 left-4 z-50 p-2 bg-black text-white rounded-md md:hidden"
-        onClick={() => setIsSidebarOpen(true)}
-      >
-        <FiMenu size={22} />
-      </button>
-
-      <div
-        className={`fixed z-40 inset-y-0 left-0 transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 md:translate-x-0 md:static`}
-      >
-        <Sidebar
-          onCreate={handleCreate}
-          closeSidebar={() => setIsSidebarOpen(false)}
-        />
+    <>
+      <Sidebar onCreate={handleCreate} />
+      <EditSidebar
+        card={editingCard}
+        isOpen={isEditSidebarOpen}
+        onClose={() => setIsEditSidebarOpen(false)}
+        onSave={handleUpdate}
+      />
+      <div className="pt-5">
+        {!loading && (
+          <NotesFilter
+            onFilter={handleFilter}
+            searchTerm={searchTerm}
+            statusFilter={statusFilter}
+          />
+        )}
       </div>
-
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* ✅ Main Content */}
-      <div className="flex-1 w-full">
-        
-        <EditSidebar
-          card={editingCard}
-          isOpen={isEditSidebarOpen}
-          onClose={() => setIsEditSidebarOpen(false)}
-          onSave={handleUpdate}
-        />
-
-        <div className="pt-16 px-3 sm:px-5 md:px-6">
-          {!loading && (
-            <NotesFilter
-              onFilter={handleFilter}
-              searchTerm={searchTerm}
-              statusFilter={statusFilter}
-            />
-          )}
-        </div>
-
-        <main className="p-3 sm:p-5 md:p-6 bg-gray-100 dark:bg-neutral-900 min-h-screen">
-          
-          {loading ? (
-            <div className="flex items-center justify-center min-h-[50vh]">
-              <p className="text-sm sm:text-base">Loading...</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {filteredNotes.map((note) => (
-                <Notes
-                  key={note._id}
-                  title={note.title}
-                  description={note.description}
-                  initialStatus={note.completed ? "completed" : "pending"}
-                  onDelete={() => handleDelete(note._id)}
-                  onEdit={() => handleEdit(note)}
-                  onToggle={() => toggleComplete(note)}
-                />
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
+      <main className="flex-1 p-6 mt-16 ml-64 mr-1 bg-gray-100 dark:bg-neutral-900 min-h-screen">
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <p>Loading...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {filteredNotes.map((note) => (
+              <Notes
+                key={note._id}
+                title={note.title}
+                description={note.description}
+                initialStatus={note.completed ? "completed" : "pending"}
+                onDelete={() => handleDelete(note._id)}
+                onEdit={() => handleEdit(note)}
+                onToggle={() => toggleComplete(note)}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+    </>
   );
 }
